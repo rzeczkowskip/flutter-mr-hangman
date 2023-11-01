@@ -20,7 +20,9 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => HomeScreen(title: AppConfig.name)
+        '/': (context) => HomeScreen(title: AppConfig.name),
+        '/game': (context) => HomeScreen(title: 'Game'),
+        '/highScores': (context) => HomeScreen(title: 'High Scores'),
       },
     );
   }
