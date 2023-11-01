@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../components/main_menu.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
@@ -76,6 +77,10 @@ class _HomeScreenState extends State<HomeScreen> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            FractionallySizedBox(
+              widthFactor: .8,
+              child: const MainMenu(),
+            )
           ],
         ),
       ),
