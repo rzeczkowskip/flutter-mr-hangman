@@ -13,6 +13,8 @@ class GameKeyboard extends StatelessWidget {
   List<String> usedLetters;
   void Function(String letter) onTap;
 
+  int maxKeyboardWidth = 840;
+
   // using hardcoded rows for now
   // maybe in future we can use different keys per language
   final List<List<String>> _keyboardRows = [
@@ -26,7 +28,8 @@ class GameKeyboard extends StatelessWidget {
     int maxKeysInRow = _keyboardRows.map((row) => row.length).reduce(max);
     double keyWidthMultiplier = 1 / maxKeysInRow;
 
-    return (containerWidth * keyWidthMultiplier).floorToDouble();
+    return (min(containerWidth, maxKeyboardWidth) * keyWidthMultiplier)
+        .floorToDouble();
   }
 
   @override
