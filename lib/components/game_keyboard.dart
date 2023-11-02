@@ -32,25 +32,24 @@ class GameKeyboard extends StatelessWidget {
         .floorToDouble();
   }
 
+  List<Widget> _buildKeyboardRowsList(double keyWidth) {
+    return _keyboardRows
+        .map((row) => _KeyboardRow(
+            characters: row,
+            keyWidth: keyWidth,
+            onTap: onTap,
+            usedLetters: usedLetters))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      final keyWidth = _calculateKeyWidth(constraints.maxWidth);
-
-      final List<Widget> keyRows = _keyboardRows
-          .map((row) => _KeyboardRow(
-              characters: row,
-              keyWidth: keyWidth,
-              onTap: onTap,
-              usedLetters: usedLetters))
-          .toList();
-
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: keyRows,
-      );
-    });
+        builder: (BuildContext context, BoxConstraints constraints) => Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: _buildKeyboardRowsList(
+                  _calculateKeyWidth(constraints.maxWidth)),
+            ));
   }
 }
 
