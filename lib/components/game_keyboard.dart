@@ -39,19 +39,11 @@ class GameKeyboard extends StatelessWidget {
       final keyWidth = _calculateKeyWidth(constraints.maxWidth);
 
       final List<Widget> keyRows = _keyboardRows
-          .map((row) => Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: row
-                    .map((char) => KeyboardButton(
-                          value: char,
-                          width: keyWidth,
-                          onTap: () {
-                            onTap(char);
-                          },
-                          disabled: usedLetters.contains(char),
-                        ))
-                    .toList(),
-              ))
+          .map((row) => _KeyboardRow(
+              characters: row,
+              keyWidth: keyWidth,
+              onTap: onTap,
+              usedLetters: usedLetters))
           .toList();
 
       return Column(
@@ -62,10 +54,41 @@ class GameKeyboard extends StatelessWidget {
   }
 }
 
+class _KeyboardRow extends StatelessWidget {
+  const _KeyboardRow(
+      {required this.characters,
+      required this.keyWidth,
+      required this.onTap,
+      required this.usedLetters});
+
+  final List<String> characters;
+  final double keyWidth;
+  final KeyboardButtonTapCallback onTap;
+  final List<String> usedLetters;
+
+  @override
+  Widget build(BuildContext context) {
+    final keys = characters
+        .map((char) => KeyboardButton(
+              value: char,
+              width: keyWidth,
+              onTap: () {
+                onTap(char);
+              },
+              disabled: usedLetters.contains(char),
+            ))
+        .toList();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: keys,
+    );
+  }
+}
+
 class KeyboardButton extends StatelessWidget {
-  KeyboardButton(
-      {super.key,
-      required this.value,
+  const KeyboardButton(
+      {required this.value,
       required this.width,
       this.onTap,
       this.disabled = false});
