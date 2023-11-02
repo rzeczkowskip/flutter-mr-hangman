@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
+import 'screens/game_screen.dart';
 import 'constants.dart';
 
 void main() {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomeScreen(title: AppConfig.name),
-        '/game': (context) => HomeScreen(title: 'Game'),
+        '/game': (context) => const GameScreen(),
         '/highScores': (context) => HomeScreen(title: 'High Scores'),
       },
     );
