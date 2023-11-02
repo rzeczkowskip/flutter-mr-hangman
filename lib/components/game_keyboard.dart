@@ -69,7 +69,7 @@ class _KeyboardRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final keys = characters
-        .map((char) => KeyboardButton(
+        .map((char) => _KeyboardButton(
               value: char,
               width: keyWidth,
               onTap: () {
@@ -86,8 +86,8 @@ class _KeyboardRow extends StatelessWidget {
   }
 }
 
-class KeyboardButton extends StatelessWidget {
-  const KeyboardButton(
+class _KeyboardButton extends StatelessWidget {
+  const _KeyboardButton(
       {required this.value,
       required this.width,
       this.onTap,
