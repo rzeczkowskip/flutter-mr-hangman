@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class GamePhrase extends StatelessWidget {
-  GamePhrase({ required this.phrase });
+  const GamePhrase({super.key,  required this.phrase });
+
+  static const double _fontSize = 28;
+  static const double _letterSpacing = 8;
 
   final String phrase;
 
@@ -9,9 +12,10 @@ class GamePhrase extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       phrase,
-      style: TextStyle(
-        fontSize: 42,
-        letterSpacing: 16,
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        fontSize: _fontSize,
+        letterSpacing: _letterSpacing,
       ),
     );
   }
