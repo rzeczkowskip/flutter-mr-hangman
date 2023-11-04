@@ -1,7 +1,7 @@
 enum GameState { New, Active, Guessed, Over }
 
 typedef GameOverCallback = void Function();
-typedef GameGuessCallback = void Function(bool isValidGuess, int livesToSpare, String phraseAfterGuess);
+typedef GameGuessCallback = void Function(String guessedChar, bool isValidGuess, int livesToSpare, String phraseAfterGuess);
 typedef GameWonCallback = void Function(int livesToSpare);
 
 class GameSession {
@@ -59,7 +59,7 @@ class GameSession {
   }
 
   _guessCallback(bool isValidGuess, String guessedChar) {
-    onGuess?.call(isValidGuess, livesLeft, maskedPhrase);
+    onGuess?.call(guessedChar, isValidGuess, livesLeft, maskedPhrase);
 
     if (isOver) {
       onGameOver?.call();
