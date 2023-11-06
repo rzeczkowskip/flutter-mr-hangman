@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import '../components/game_phrase.dart';
+
+import '../components/game_hangman_drawing.dart';
 import '../components/game_keyboard.dart';
+import '../components/game_phrase.dart';
+import '../components/game_status.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -10,6 +13,9 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  int _lives = 11;
+  int _usedLives = 0;
+
   Future<bool> _onWillPop() async {
     return (await showDialog(
           context: context,
@@ -40,9 +46,21 @@ class _GameScreenState extends State<GameScreen> {
         onWillPop: _onWillPop,
         child: Scaffold(
           body: SafeArea(
+              child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 8),
             child: Column(
               children: [
-                const Text('game status'),
+                Expanded(
+                  flex: 0,
+                  child: Container(
+                    height: 20,
+                    padding: EdgeInsets.symmetric(vertical: 5),
+                    child: GameStatus(
+                      lives: _lives,
+                      usedLives: _usedLives,
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: OrientationBuilder(builder: (context, orientation) {
                     Axis direction = orientation == Orientation.portrait
@@ -55,16 +73,20 @@ class _GameScreenState extends State<GameScreen> {
                         child: Container(
                           alignment: Alignment.center,
                           margin: const EdgeInsets.all(20),
-                          child: const Text('Image'),
+                          child: GameHangmanDrawing(
+                              lives: _lives, usedLives: _usedLives),
                         ),
                       ),
                       Expanded(
                         flex: 0,
                         child: Container(
                           alignment: Alignment.center,
-                          margin:
-                          const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
-                          child: const GamePhrase(phrase: 'demo p__a_e to g____'),
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 30,
+                            horizontal: 10,
+                          ),
+                          child:
+                              const GamePhrase(phrase: 'demo p__a_e to g____'),
                         ),
                       ),
                     ].toList();
@@ -79,11 +101,18 @@ class _GameScreenState extends State<GameScreen> {
                 ),
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 20),
-                  child: GameKeyboard(usedLetters: const [], onTap: (letter) {}),
+                  child: GameKeyboard(
+                    usedLetters: const [],
+                    onTap: (letter) {
+                      setState(() {
+                        _usedLives += 1;
+                      });
+                    },
+                  ),
                 )
               ],
             ),
-          ),
+          )),
         ));
   }
 }
