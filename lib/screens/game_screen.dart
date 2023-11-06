@@ -61,6 +61,17 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                   ),
                 ),
+                Container(
+                  margin: EdgeInsets.only(top: 5),
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      Navigator.maybePop(context);
+                    },
+                    icon: BackButtonIcon(),
+                    label: Text('End game'),
+                  ),
+                ),
                 Expanded(
                   child: OrientationBuilder(builder: (context, orientation) {
                     Axis direction = orientation == Orientation.portrait
