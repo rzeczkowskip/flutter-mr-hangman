@@ -57,12 +57,13 @@ class _GameHangmanDrawingState extends State<GameHangmanDrawing> {
 
       int used = widget.usedLives;
       double computed = (widget.usedLives * _opacityStep);
-      double computed2 = (widget.usedLives - 1 * _opacityStep);
 
-      int floored2 = computed2.floor();
+      _opacities = List.generate(
+        _opacitiesCount - 1,
+        (index) => computed >= index ? 1 : 0,
+      );
 
-      _opacities =
-          List.generate(_opacitiesCount, (index) => computed >= index ? 1 : 0);
+      _opacities.add(0);
     });
   }
 
