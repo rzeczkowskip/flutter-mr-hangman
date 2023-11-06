@@ -18,7 +18,7 @@ class GameSession {
 
   int _failedGuesses = 0;
 
-  List<String> _usedChars = [];
+  final List<String> _usedChars = [];
 
   final GameOverCallback? onGameOver;
   final GameGuessCallback? onGuess;
@@ -28,7 +28,7 @@ class GameSession {
   bool get isWon => maskedPhrase == phrase;
 
   String get maskedPhrase {
-    final String allowedChars = ' ' + _usedChars.join();
+    final String allowedChars = ' ${_usedChars.join()}';
     final RegExp allowedCharsRegexp = RegExp(r'(?:[^\w\d]|[^' + allowedChars + '])');
 
     return phrase.replaceAll(allowedCharsRegexp, '_');
@@ -79,6 +79,7 @@ abstract class GamePhraseLoader {
 class DemoGamePhraseLoader implements GamePhraseLoader {
   const DemoGamePhraseLoader();
 
+  @override
   String load() {
     return 'demo phrase to guess';
   }
