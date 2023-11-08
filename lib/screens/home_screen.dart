@@ -77,9 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            FractionallySizedBox(
+            const FractionallySizedBox(
               widthFactor: .8,
-              child: const MainMenu(),
+              child: MainMenu(),
             )
           ],
         ),

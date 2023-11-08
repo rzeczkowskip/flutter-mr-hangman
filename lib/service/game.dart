@@ -1,7 +1,8 @@
 enum GameState { New, Active, Guessed, Over }
 
 typedef GameOverCallback = void Function();
-typedef GameGuessCallback = void Function(String guessedChar, bool isValidGuess, int livesToSpare, String phraseAfterGuess);
+typedef GameGuessCallback = void Function(String guessedChar, bool isValidGuess,
+    int livesToSpare, String phraseAfterGuess);
 typedef GameWonCallback = void Function(int livesToSpare);
 
 class GameSession {
@@ -25,11 +26,13 @@ class GameSession {
   final GameWonCallback? onWin;
 
   bool get isOver => _failedGuesses >= lives;
+
   bool get isWon => maskedPhrase == phrase;
 
   String get maskedPhrase {
     final String allowedChars = ' ${_usedChars.join()}';
-    final RegExp allowedCharsRegexp = RegExp(r'(?:[^\w\d]|[^' + allowedChars + '])');
+    final RegExp allowedCharsRegexp =
+        RegExp(r'(?:[^\w\d]|[^' + allowedChars + '])');
 
     return phrase.replaceAll(allowedCharsRegexp, '_');
   }

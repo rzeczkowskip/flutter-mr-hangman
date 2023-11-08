@@ -13,7 +13,7 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  int _lives = 11;
+  final int _lives = 11;
   int _usedLives = 0;
 
   Future<bool> _onWillPop() async {
@@ -47,24 +47,24 @@ class _GameScreenState extends State<GameScreen> {
         child: Scaffold(
           body: SafeArea(
               child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 8),
+            margin: const EdgeInsets.symmetric(horizontal: 8),
             child: Column(
               children: [
                 Expanded(
                   flex: 0,
                   child: Container(
                     height: 42,
-                    padding: EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Row(
                       children: [
                         Expanded(
+                          flex: 0,
                           child: GameStatus(
                             lives: _lives,
                             usedLives: _usedLives,
                           ),
-                          flex: 0,
                         ),
-                        Spacer(),
+                        const Spacer(),
                         TextButton.icon(
                           style: TextButton.styleFrom(
                             backgroundColor: theme.colorScheme.primaryContainer,
@@ -78,7 +78,7 @@ class _GameScreenState extends State<GameScreen> {
                             color: theme.colorScheme.primary,
                             colorBlendMode: BlendMode.modulate,
                           ),
-                          label: Text('End game'),
+                          label: const Text('End game'),
                         ),
                       ],
                     ),

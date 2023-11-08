@@ -74,7 +74,7 @@ class _GameHangmanDrawingState extends State<GameHangmanDrawing> {
   AnimatedOpacity buildAnimatedImage(double opacity, Image image) {
     return AnimatedOpacity(
       opacity: opacity,
-      duration: Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 200),
       child: image,
     );
   }

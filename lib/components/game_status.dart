@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 typedef KeyboardButtonTapCallback = void Function(String letter);
 
 class GameStatus extends StatelessWidget {
-  GameStatus({
+  const GameStatus({super.key, 
     required this.lives,
     required this.usedLives,
   });
@@ -24,7 +24,7 @@ class GameStatus extends StatelessWidget {
 }
 
 class _Lives extends StatefulWidget {
-  _Lives({
+  const _Lives({
     required this.lives,
     required this.usedLives,
   });
@@ -76,8 +76,8 @@ class _LivesState extends State<_Lives> {
     }
 
     return Wrap(
-      children: hpImages,
       spacing: 1,
+      children: hpImages,
     );
   }
 }
