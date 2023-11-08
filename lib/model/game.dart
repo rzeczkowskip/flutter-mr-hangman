@@ -30,9 +30,9 @@ class GameSession {
   bool get isWon => maskedPhrase == phrase;
 
   String get maskedPhrase {
-    final String allowedChars = ' ${_usedChars.join()}';
+    final String allowedChars = _usedChars.join();
     final RegExp allowedCharsRegexp =
-        RegExp(r'(?:[^\w\d]|[^' + allowedChars + '])');
+        RegExp(r'(?:[^0-9 ' + allowedChars + '])');
 
     return phrase.replaceAll(allowedCharsRegexp, '_');
   }
