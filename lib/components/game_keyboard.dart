@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+
+import 'package:flutter/material.dart';
 
 typedef KeyboardButtonTapCallback = void Function(String letter);
 
@@ -8,10 +9,12 @@ class GameKeyboard extends StatelessWidget {
     super.key,
     required this.usedLetters,
     required this.onTap,
+    this.disabled = false,
   });
 
   List<String> usedLetters;
   void Function(String letter) onTap;
+  final bool disabled;
 
   int maxKeyboardWidth = 840;
 
@@ -35,10 +38,12 @@ class GameKeyboard extends StatelessWidget {
   List<Widget> _buildKeyboardRowsList(double keyWidth) {
     return _keyboardRows
         .map((row) => _KeyboardRow(
-            characters: row,
-            keyWidth: keyWidth,
-            onTap: onTap,
-            usedLetters: usedLetters))
+              characters: row,
+              keyWidth: keyWidth,
+              onTap: onTap,
+              usedLetters: usedLetters,
+              disabled: disabled,
+            ))
         .toList();
   }
 
@@ -54,16 +59,19 @@ class GameKeyboard extends StatelessWidget {
 }
 
 class _KeyboardRow extends StatelessWidget {
-  const _KeyboardRow(
-      {required this.characters,
-      required this.keyWidth,
-      required this.onTap,
-      required this.usedLetters});
+  const _KeyboardRow({
+    required this.characters,
+    required this.keyWidth,
+    required this.onTap,
+    required this.usedLetters,
+    this.disabled = false,
+  });
 
   final List<String> characters;
   final double keyWidth;
   final KeyboardButtonTapCallback onTap;
   final List<String> usedLetters;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +82,7 @@ class _KeyboardRow extends StatelessWidget {
               onTap: () {
                 onTap(char);
               },
-              disabled: usedLetters.contains(char),
+              disabled: disabled || usedLetters.contains(char),
             ))
         .toList();
 

@@ -3,20 +3,38 @@ import 'package:flutter/material.dart';
 import '../components/game_hangman_drawing.dart';
 import '../components/game_keyboard.dart';
 import '../components/game_phrase.dart';
+import '../components/game_result_dialog.dart';
 import '../components/game_status.dart';
+import '../model/game.dart';
+import '../service/game.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
+
+  final GamePhraseLoader phraseLoader = const DemoGamePhraseLoader();
 
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
 
 class _GameScreenState extends State<GameScreen> {
-  final int _lives = 11;
-  int _usedLives = 0;
+  late GameSession _game;
+
+  late int _lives;
+  late int _usedLives;
+  late String _phrase;
+  List<String> _usedChars = [];
+
+  void _exitToHome() {
+    Navigator.popUntil(context, (route) => route.settings.name == '/');
+  }
 
   Future<bool> _onWillPop() async {
+    if (_game.isOver) {
+      _exitToHome();
+      return false;
+    }
+
     return (await showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -29,13 +47,55 @@ class _GameScreenState extends State<GameScreen> {
                 child: const Text('No'),
               ),
               TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: _exitToHome,
                 child: const Text('Yes'),
               ),
             ],
           ),
         )) ??
         false;
+  }
+
+  void initState() {
+    loadNewGame();
+  }
+
+  void loadNewGame() {
+    _game = GameSession(
+      phrase: widget.phraseLoader.load(),
+      onWin: (livesLeft) async {
+        await showDialog(
+          context: context,
+          builder: (context) => GameResultDialog(
+              phrase: _game.phrase, result: GameResultDialogState.Won),
+        );
+
+        loadNewGame();
+      },
+      onGuess: (guessedChar, isValidGuess, livesToSpare, phraseAfterGuess) {
+        updateGameState();
+      },
+      onGameOver: () {
+        showDialog(
+          context: context,
+          builder: (context) => GameResultDialog(
+            phrase: _game.phrase,
+            result: GameResultDialogState.Over,
+          ),
+        );
+      },
+    );
+
+    updateGameState();
+  }
+
+  void updateGameState() {
+    setState(() {
+      _lives = _game.lives;
+      _usedLives = _game.usedLives;
+      _phrase = _game.maskedPhrase;
+      _usedChars = _game.chars;
+    });
   }
 
   @override
@@ -108,8 +168,7 @@ class _GameScreenState extends State<GameScreen> {
                             vertical: 30,
                             horizontal: 10,
                           ),
-                          child:
-                              const GamePhrase(phrase: 'demo p__a_e to g____'),
+                          child: GamePhrase(phrase: _phrase),
                         ),
                       ),
                     ].toList();
@@ -125,12 +184,11 @@ class _GameScreenState extends State<GameScreen> {
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 20),
                   child: GameKeyboard(
-                    usedLetters: const [],
+                    usedLetters: _usedChars,
                     onTap: (letter) {
-                      setState(() {
-                        _usedLives += 1;
-                      });
+                      _game.guess(letter);
                     },
+                    disabled: _game.isOver,
                   ),
                 )
               ],
