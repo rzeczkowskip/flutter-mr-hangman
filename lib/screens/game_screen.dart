@@ -53,23 +53,35 @@ class _GameScreenState extends State<GameScreen> {
                 Expanded(
                   flex: 0,
                   child: Container(
-                    height: 20,
+                    height: 42,
                     padding: EdgeInsets.symmetric(vertical: 5),
-                    child: GameStatus(
-                      lives: _lives,
-                      usedLives: _usedLives,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GameStatus(
+                            lives: _lives,
+                            usedLives: _usedLives,
+                          ),
+                          flex: 0,
+                        ),
+                        Spacer(),
+                        TextButton.icon(
+                          style: TextButton.styleFrom(
+                            backgroundColor: theme.colorScheme.primaryContainer,
+                          ),
+                          onPressed: () {
+                            Navigator.maybePop(context);
+                          },
+                          icon: Image.asset(
+                            'assets/exit_icon.png',
+                            height: 20,
+                            color: theme.colorScheme.primary,
+                            colorBlendMode: BlendMode.modulate,
+                          ),
+                          label: Text('End game'),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 5),
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.maybePop(context);
-                    },
-                    icon: BackButtonIcon(),
-                    label: Text('End game'),
                   ),
                 ),
                 Expanded(
