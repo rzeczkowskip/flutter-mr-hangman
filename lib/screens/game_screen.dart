@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../components/game_hangman_drawing.dart';
 import '../components/game_keyboard.dart';
-import '../components/game_over_dialog.dart';
 import '../components/game_phrase.dart';
+import '../components/game_result_dialog.dart';
 import '../components/game_status.dart';
 import '../model/game.dart';
 import '../service/game.dart';
@@ -63,14 +63,25 @@ class _GameScreenState extends State<GameScreen> {
   void loadNewGame() {
     _game = GameSession(
       phrase: widget.phraseLoader.load(),
-      onWin: (livesLeft) {},
+      onWin: (livesLeft) async {
+        await showDialog(
+          context: context,
+          builder: (context) => GameResultDialog(
+              phrase: _game.phrase, result: GameResultDialogState.Won),
+        );
+
+        loadNewGame();
+      },
       onGuess: (guessedChar, isValidGuess, livesToSpare, phraseAfterGuess) {
         updateGameState();
       },
       onGameOver: () {
         showDialog(
           context: context,
-          builder: (context) => GameOverDialog(phrase: _game.phrase),
+          builder: (context) => GameResultDialog(
+            phrase: _game.phrase,
+            result: GameResultDialogState.Over,
+          ),
         );
       },
     );
