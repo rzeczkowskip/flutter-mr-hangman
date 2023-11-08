@@ -5,13 +5,15 @@ import '../components/game_keyboard.dart';
 import '../components/game_phrase.dart';
 import '../components/game_result_dialog.dart';
 import '../components/game_status.dart';
+import '../constants.dart';
 import '../model/game.dart';
 import '../service/game.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+  GameScreen({super.key});
 
-  final GamePhraseLoader phraseLoader = const DemoGamePhraseLoader();
+  GamePhraseLoader phraseLoader =
+      GameConfig.isDemo ? DemoGamePhraseLoader() : LocalPhraseLoader();
 
   @override
   State<GameScreen> createState() => _GameScreenState();
