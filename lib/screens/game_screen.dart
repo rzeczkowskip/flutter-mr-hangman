@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../components/game_hangman_drawing.dart';
 import '../components/game_keyboard.dart';
+import '../components/game_over_dialog.dart';
 import '../components/game_phrase.dart';
 import '../components/game_status.dart';
 import '../model/game.dart';
@@ -24,7 +25,16 @@ class _GameScreenState extends State<GameScreen> {
   late String _phrase;
   List<String> _usedChars = [];
 
+  void _exitToHome() {
+    Navigator.popUntil(context, (route) => route.settings.name == '/');
+  }
+
   Future<bool> _onWillPop() async {
+    if (_game.isOver) {
+      _exitToHome();
+      return false;
+    }
+
     return (await showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -37,7 +47,7 @@ class _GameScreenState extends State<GameScreen> {
                 child: const Text('No'),
               ),
               TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: _exitToHome,
                 child: const Text('Yes'),
               ),
             ],
@@ -57,7 +67,12 @@ class _GameScreenState extends State<GameScreen> {
       onGuess: (guessedChar, isValidGuess, livesToSpare, phraseAfterGuess) {
         updateGameState();
       },
-      onGameOver: () {},
+      onGameOver: () {
+        showDialog(
+          context: context,
+          builder: (context) => GameOverDialog(phrase: _game.phrase),
+        );
+      },
     );
 
     updateGameState();
