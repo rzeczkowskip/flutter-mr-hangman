@@ -27,6 +27,8 @@ class _GameHangmanDrawingState extends State<GameHangmanDrawing> {
     'assets/face.png',
   ];
 
+  static const double visibleOpacity = 1;
+
   final int _opacitiesCount = _assetPaths.length;
 
   late List<Image> _images;
@@ -36,9 +38,6 @@ class _GameHangmanDrawingState extends State<GameHangmanDrawing> {
 
   @override
   void initState() {
-    _images =
-        _assetPaths.mapIndexed((index, name) => Image.asset(name)).toList();
-
     _opacityStep = _opacitiesCount / widget.lives;
     recalculateAndUpdateOpacities();
   }
@@ -51,7 +50,7 @@ class _GameHangmanDrawingState extends State<GameHangmanDrawing> {
       }
 
       if (widget.usedLives >= widget.lives) {
-        _opacities = List.filled(_opacitiesCount, 1.toDouble());
+        _opacities = List.filled(_opacitiesCount, visibleOpacity);
         return;
       }
 
@@ -60,7 +59,7 @@ class _GameHangmanDrawingState extends State<GameHangmanDrawing> {
 
       _opacities = List.generate(
         _opacitiesCount - 1,
-        (index) => computed >= index ? 1 : 0,
+        (index) => computed >= index ? visibleOpacity : 0,
       );
 
       _opacities.add(0);
@@ -82,9 +81,16 @@ class _GameHangmanDrawingState extends State<GameHangmanDrawing> {
 
   @override
   Widget build(BuildContext context) {
-    List<AnimatedOpacity> images = _images
+    Color primaryColor = Theme.of(context).colorScheme.primary;
+
+    List<AnimatedOpacity> images = _assetPaths
         .mapIndexed(
-          (index, image) => buildAnimatedImage(_opacities[index], image),
+          (index, imagePath) => buildAnimatedImage(
+              _opacities[index],
+              Image.asset(
+                imagePath,
+                color: primaryColor,
+              )),
         )
         .toList();
 
