@@ -1,3 +1,5 @@
+import '../constants.dart';
+
 enum GameState { New, Active, Guessed, Over }
 
 typedef GameOverCallback = void Function();
@@ -8,7 +10,7 @@ typedef GameWonCallback = void Function(int livesToSpare);
 class GameSession {
   GameSession({
     required this.phrase,
-    required this.lives,
+    this.lives = GameConfig.lives,
     this.onGuess,
     this.onGameOver,
     this.onWin,
@@ -38,6 +40,8 @@ class GameSession {
   }
 
   int get livesLeft => lives - _failedGuesses;
+
+  int get usedLives => _failedGuesses;
 
   List<String> get chars => _usedChars;
 
