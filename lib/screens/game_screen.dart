@@ -4,17 +4,25 @@ import '../components/game_hangman_drawing.dart';
 import '../components/game_keyboard.dart';
 import '../components/game_phrase.dart';
 import '../components/game_status.dart';
+import '../model/game.dart';
+import '../service/game.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
+
+  final GamePhraseLoader phraseLoader = const DemoGamePhraseLoader();
 
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
 
 class _GameScreenState extends State<GameScreen> {
-  final int _lives = 11;
-  int _usedLives = 0;
+  late GameSession _game;
+
+  late int _lives;
+  late int _usedLives;
+  late String _phrase;
+  List<String> _usedChars = [];
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
@@ -36,6 +44,32 @@ class _GameScreenState extends State<GameScreen> {
           ),
         )) ??
         false;
+  }
+
+  void initState() {
+    loadNewGame();
+  }
+
+  void loadNewGame() {
+    _game = GameSession(
+      phrase: widget.phraseLoader.load(),
+      onWin: (livesLeft) {},
+      onGuess: (guessedChar, isValidGuess, livesToSpare, phraseAfterGuess) {
+        updateGameState();
+      },
+      onGameOver: () {},
+    );
+
+    updateGameState();
+  }
+
+  void updateGameState() {
+    setState(() {
+      _lives = _game.lives;
+      _usedLives = _game.usedLives;
+      _phrase = _game.maskedPhrase;
+      _usedChars = _game.chars;
+    });
   }
 
   @override
@@ -108,8 +142,7 @@ class _GameScreenState extends State<GameScreen> {
                             vertical: 30,
                             horizontal: 10,
                           ),
-                          child:
-                              const GamePhrase(phrase: 'demo p__a_e to g____'),
+                          child: GamePhrase(phrase: _phrase),
                         ),
                       ),
                     ].toList();
@@ -125,11 +158,9 @@ class _GameScreenState extends State<GameScreen> {
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 20),
                   child: GameKeyboard(
-                    usedLetters: const [],
+                    usedLetters: _usedChars,
                     onTap: (letter) {
-                      setState(() {
-                        _usedLives += 1;
-                      });
+                      _game.guess(letter);
                     },
                   ),
                 )
