@@ -18,7 +18,6 @@ class GameStatus extends StatelessWidget {
     return Row(
       children: [
         _Lives(lives: lives, usedLives: usedLives),
-        Spacer(),
       ],
     );
   }
@@ -31,7 +30,7 @@ class _Lives extends StatefulWidget {
   });
 
   static const int maxHearts = 7;
-  static const double heartSize = 16;
+  static const double heartSize = 20;
 
   final int lives;
   final int usedLives;
@@ -59,6 +58,8 @@ class _LivesState extends State<_Lives> {
       height: _Lives.heartSize,
       fit: BoxFit.contain,
     );
+
+    super.initState();
   }
 
   @override
