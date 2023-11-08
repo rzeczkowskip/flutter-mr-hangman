@@ -5,24 +5,29 @@ import '../components/game_keyboard.dart';
 import '../components/game_phrase.dart';
 import '../components/game_result_dialog.dart';
 import '../components/game_status.dart';
+import '../constants.dart';
 import '../model/game.dart';
 import '../service/game.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+  GameScreen({super.key});
 
-  final GamePhraseLoader phraseLoader = const DemoGamePhraseLoader();
+  GamePhraseLoader phraseLoader =
+      GameConfig.isDemo ? DemoGamePhraseLoader() : LocalPhraseLoader();
 
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
 
 class _GameScreenState extends State<GameScreen> {
-  late GameSession _game;
+  bool _loading = true;
+
+  GameSession _game = GameSession(phrase: '');
 
   late int _lives;
   late int _usedLives;
   late String _phrase;
+
   List<String> _usedChars = [];
 
   void _exitToHome() {
@@ -57,20 +62,40 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void initState() {
-    loadNewGame();
+    updateGameState();
   }
 
-  void loadNewGame() {
+  bool _canLoadNewGame() {
+    if (_game.phrase == '') {
+      return true;
+    }
+
+    return !_game.isOver && _game.isFinished;
+  }
+
+  Future<void> loadNewGame() async {
+    if (!_canLoadNewGame()) {
+      return;
+    }
+
+    setState(() {
+      _loading = true;
+    });
+
+    String phrase = await widget.phraseLoader.load();
     _game = GameSession(
-      phrase: widget.phraseLoader.load(),
+      phrase: phrase,
       onWin: (livesLeft) async {
         await showDialog(
           context: context,
           builder: (context) => GameResultDialog(
-              phrase: _game.phrase, result: GameResultDialogState.Won),
+            phrase: _game.phrase,
+            result: GameResultDialogState.Won,
+          ),
         );
 
-        loadNewGame();
+        _game.finish();
+        updateGameState();
       },
       onGuess: (guessedChar, isValidGuess, livesToSpare, phraseAfterGuess) {
         updateGameState();
@@ -87,6 +112,9 @@ class _GameScreenState extends State<GameScreen> {
     );
 
     updateGameState();
+    setState(() {
+      _loading = false;
+    });
   }
 
   void updateGameState() {
@@ -106,94 +134,112 @@ class _GameScreenState extends State<GameScreen> {
         onWillPop: _onWillPop,
         child: Scaffold(
           body: SafeArea(
-              child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 0,
-                  child: Container(
-                    height: 42,
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 0,
-                          child: GameStatus(
-                            lives: _lives,
-                            usedLives: _usedLives,
-                          ),
-                        ),
-                        const Spacer(),
-                        TextButton.icon(
-                          style: TextButton.styleFrom(
-                            backgroundColor: theme.colorScheme.primaryContainer,
-                          ),
-                          onPressed: () {
-                            Navigator.maybePop(context);
-                          },
-                          icon: Image.asset(
-                            'assets/exit_icon.png',
-                            height: 20,
-                            color: theme.colorScheme.primary,
-                            colorBlendMode: BlendMode.modulate,
-                          ),
-                          label: const Text('End game'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: OrientationBuilder(builder: (context, orientation) {
-                    Axis direction = orientation == Orientation.portrait
-                        ? Axis.vertical
-                        : Axis.horizontal;
+            child: FutureBuilder<void>(
+                future: loadNewGame(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  return AnimatedSwitcher(
+                    duration: Duration(milliseconds: 200),
+                    child: _loading &&
+                            snapshot.connectionState != ConnectionState.done
+                        ? Center(child: CircularProgressIndicator())
+                        : Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  flex: 0,
+                                  child: Container(
+                                    height: 42,
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 5),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 0,
+                                          child: GameStatus(
+                                            lives: _lives,
+                                            usedLives: _usedLives,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        TextButton.icon(
+                                          style: TextButton.styleFrom(
+                                            backgroundColor: theme
+                                                .colorScheme.primaryContainer,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.maybePop(context);
+                                          },
+                                          icon: Image.asset(
+                                            'assets/exit_icon.png',
+                                            height: 20,
+                                            color: theme.colorScheme.primary,
+                                            colorBlendMode: BlendMode.modulate,
+                                          ),
+                                          label: const Text('End game'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: OrientationBuilder(
+                                      builder: (context, orientation) {
+                                    Axis direction =
+                                        orientation == Orientation.portrait
+                                            ? Axis.vertical
+                                            : Axis.horizontal;
 
-                    List<Widget> gameBoxes = [
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.all(20),
-                          child: GameHangmanDrawing(
-                              lives: _lives, usedLives: _usedLives),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 0,
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 30,
-                            horizontal: 10,
-                          ),
-                          child: GamePhrase(phrase: _phrase),
-                        ),
-                      ),
-                    ].toList();
+                                    List<Widget> gameBoxes = [
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          margin: const EdgeInsets.all(20),
+                                          child: GameHangmanDrawing(
+                                              lives: _lives,
+                                              usedLives: _usedLives),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 0,
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          margin: const EdgeInsets.symmetric(
+                                            vertical: 30,
+                                            horizontal: 10,
+                                          ),
+                                          child: GamePhrase(phrase: _phrase),
+                                        ),
+                                      ),
+                                    ].toList();
 
-                    return Flex(
-                      direction: direction,
-                      children: orientation == Orientation.portrait
-                          ? gameBoxes
-                          : (gameBoxes.reversed.toList()),
-                    );
-                  }),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 20),
-                  child: GameKeyboard(
-                    usedLetters: _usedChars,
-                    onTap: (letter) {
-                      _game.guess(letter);
-                    },
-                    disabled: _game.isOver,
-                  ),
-                )
-              ],
-            ),
-          )),
+                                    return Flex(
+                                      direction: direction,
+                                      children:
+                                          orientation == Orientation.portrait
+                                              ? gameBoxes
+                                              : (gameBoxes.reversed.toList()),
+                                    );
+                                  }),
+                                ),
+                                Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 20),
+                                  child: GameKeyboard(
+                                    usedLetters: _usedChars,
+                                    onTap: (letter) {
+                                      _game.guess(letter);
+                                    },
+                                    disabled: _game.isWon || _game.isOver,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                  );
+                }),
+          ),
         ));
   }
 }

@@ -27,9 +27,13 @@ class GameSession {
   final GameGuessCallback? onGuess;
   final GameWonCallback? onWin;
 
+  bool _finished = false;
+
   bool get isOver => _failedGuesses >= lives;
 
   bool get isWon => maskedPhrase == phrase;
+
+  bool get isFinished => _finished || isOver;
 
   String get maskedPhrase {
     final String allowedChars = _usedChars.join();
@@ -46,7 +50,7 @@ class GameSession {
   List<String> get chars => _usedChars;
 
   bool guess(String c) {
-    if (isOver) {
+    if (isFinished) {
       return false;
     }
 
@@ -65,7 +69,7 @@ class GameSession {
     return isValidGuess;
   }
 
-  _guessCallback(bool isValidGuess, String guessedChar) {
+  void _guessCallback(bool isValidGuess, String guessedChar) {
     onGuess?.call(guessedChar, isValidGuess, livesLeft, maskedPhrase);
 
     if (isOver) {
@@ -76,5 +80,9 @@ class GameSession {
     if (isWon) {
       onWin?.call(livesLeft);
     }
+  }
+
+  void finish() {
+    _finished = true;
   }
 }
