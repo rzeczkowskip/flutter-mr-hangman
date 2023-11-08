@@ -1,12 +1,12 @@
 abstract class GamePhraseLoader {
-  String load();
+  Future<String> load();
 }
 
 class DemoGamePhraseLoader implements GamePhraseLoader {
   const DemoGamePhraseLoader();
 
   @override
-  String load() {
-    return 'demo phrase to guess';
+  Future<String> load() {
+    return Future.value('demo');
   }
 }
