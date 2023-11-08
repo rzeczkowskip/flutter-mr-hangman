@@ -188,6 +188,7 @@ class _GameScreenState extends State<GameScreen> {
                     onTap: (letter) {
                       _game.guess(letter);
                     },
+                    disabled: _game.isOver,
                   ),
                 )
               ],
