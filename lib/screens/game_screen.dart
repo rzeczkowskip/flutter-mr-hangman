@@ -63,8 +63,16 @@ class _GameScreenState extends State<GameScreen> {
     updateGameState();
   }
 
+  bool _canLoadNewGame() {
+    if (_game.phrase == '') {
+      return true;
+    }
+
+    return !_game.isOver && _game.isFinished;
+  }
+
   Future<void> loadNewGame() async {
-    if (_game.isWon == false && _game?.phrase != '') {
+    if (!_canLoadNewGame()) {
       return;
     }
 
@@ -72,7 +80,6 @@ class _GameScreenState extends State<GameScreen> {
       _loading = true;
     });
 
-    await Future.delayed(Duration(seconds: 1));
     String phrase = await widget.phraseLoader.load();
     _game = GameSession(
       phrase: phrase,
@@ -80,10 +87,13 @@ class _GameScreenState extends State<GameScreen> {
         await showDialog(
           context: context,
           builder: (context) => GameResultDialog(
-              phrase: _game.phrase, result: GameResultDialogState.Won),
+            phrase: _game.phrase,
+            result: GameResultDialogState.Won,
+          ),
         );
 
-        loadNewGame();
+        _game.finish();
+        updateGameState();
       },
       onGuess: (guessedChar, isValidGuess, livesToSpare, phraseAfterGuess) {
         updateGameState();
@@ -125,12 +135,11 @@ class _GameScreenState extends State<GameScreen> {
             child: FutureBuilder<void>(
                 future: loadNewGame(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  print(snapshot);
                   return AnimatedSwitcher(
                     duration: Duration(milliseconds: 200),
                     child: _loading &&
                             snapshot.connectionState != ConnectionState.done
-                        ? CircularProgressIndicator()
+                        ? Center(child: CircularProgressIndicator())
                         : Container(
                             margin: const EdgeInsets.symmetric(horizontal: 8),
                             child: Column(
@@ -220,7 +229,7 @@ class _GameScreenState extends State<GameScreen> {
                                     onTap: (letter) {
                                       _game.guess(letter);
                                     },
-                                    disabled: _game.isOver,
+                                    disabled: _game.isWon || _game.isOver,
                                   ),
                                 )
                               ],
