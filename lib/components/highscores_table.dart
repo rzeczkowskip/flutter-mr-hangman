@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
+import '../components/medal.dart';
 import '../model/score.dart';
 
 class HighscoresTable extends StatelessWidget {
@@ -32,7 +33,14 @@ class HighscoresTable extends StatelessWidget {
   TableRow _getScoreEntryRow(int position, int score, DateTime date) {
     List<TableCell> columns = [
       TableCell(child: Text(_formatDate(date))),
-      TableCell(child: Text(position.toString())),
+      TableCell(
+        child: Row(
+          children: [
+            Medal(position: position),
+            Text(position.toString()),
+          ],
+        ),
+      ),
       TableCell(child: Text(score.toString())),
     ];
 
