@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'constants.dart';
 import 'screens/game_screen.dart';
+import 'screens/highscores_screen.dart';
 import 'screens/home_screen.dart';
 
 void main() {
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const HomeScreen(title: AppConfig.name),
         '/game': (context) => GameScreen(),
-        '/highScores': (context) => const HomeScreen(title: 'High Scores'),
+        '/highScores': (context) => HighscoresScreen(),
       },
     );
   }
