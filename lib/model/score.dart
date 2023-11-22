@@ -6,10 +6,10 @@ class Highscore {
 
   Highscore.fromJson(Map<String, dynamic> data)
       : date = DateTime.parse(data['date']),
-        score = data['score'] as int;
+        score = data['score'];
 
-  Map<String, String> toJson() => {
+  Map<String, dynamic> toJson() => {
         'date': date.toIso8601String(),
-        'score': score.toString(),
+        'score': score,
       };
 }
