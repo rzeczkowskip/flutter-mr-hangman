@@ -5,6 +5,7 @@ import 'constants.dart';
 import 'screens/game_screen.dart';
 import 'screens/highscores_screen.dart';
 import 'screens/home_screen.dart';
+import 'service/highscores.dart';
 
 void main() async {
   registerServices(getIt);
@@ -27,7 +28,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const HomeScreen(title: AppConfig.name),
         '/game': (context) => GameScreen(),
-        '/highScores': (context) => HighscoresScreen(),
+        '/highScores': (context) =>
+            HighscoresScreen(highscores: getIt<Highscores>()),
       },
       builder: (context, widget) {
         return FutureBuilder(
