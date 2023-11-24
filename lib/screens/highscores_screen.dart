@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -41,6 +43,37 @@ class _HighscoresScreenState extends State<HighscoresScreen> {
     }
   }
 
+  Widget _getHighscoresList(BuildContext context, double maxWidth) {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(
+        horizontal: _getHorizontalPaddingToLimitWidth(context, maxWidth),
+        vertical: MediaQuery.of(context).size.height * .25,
+      ),
+      sliver: PagedSliverList.separated(
+        pagingController: _pagingController,
+        separatorBuilder: (context, index) => const Divider(),
+        builderDelegate: PagedChildBuilderDelegate<Highscore>(
+          itemBuilder: (context, item, index) => HighscoreListItem(
+            highscore: item,
+            position: index + 1,
+          ),
+        ),
+      ),
+    );
+  }
+
+  double _getHorizontalPaddingToLimitWidth(
+    BuildContext context,
+    double expectedWidth,
+  ) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double availableSpaceForPadding = max(screenWidth - 320, 0);
+
+    double padding = availableSpaceForPadding / 2;
+
+    return padding;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,14 +81,10 @@ class _HighscoresScreenState extends State<HighscoresScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Highscores'),
       ),
-      body: PagedListView(
-        pagingController: _pagingController,
-        builderDelegate: PagedChildBuilderDelegate<Highscore>(
-          itemBuilder: (context, item, index) => HighscoreListItem(
-            highscore: item,
-            position: index + 1,
-          ),
-        ),
+      body: CustomScrollView(
+        slivers: [
+          _getHighscoresList(context, 320),
+        ],
       ),
     );
   }

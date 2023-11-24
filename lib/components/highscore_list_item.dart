@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
+import '../components/medal.dart';
 import '../model/score.dart';
 
 class HighscoreListItem extends StatelessWidget {
@@ -13,11 +15,22 @@ class HighscoreListItem extends StatelessWidget {
   final int position;
 
   @override
-  Widget build(BuildContext context) => ListTile(
-        leading: CircleAvatar(
-          radius: 20,
-          child: Text(position.toString()),
-        ),
-        title: Text(highscore.score.toString()),
-      );
+  Widget build(BuildContext context) {
+    final formattedDate = DateFormat.yMMMd().format(highscore.date);
+    final formattedTime = DateFormat.Hm().format(highscore.date);
+
+    return Container(
+      height: 42,
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: Row(
+        children: [
+          Text("${formattedDate} ${formattedTime}"),
+          Spacer(flex: 1),
+          if (position < 4) Medal(position: position),
+          SizedBox(width: 5),
+          Text(highscore.score.toString()),
+        ],
+      ),
+    );
+  }
 }
