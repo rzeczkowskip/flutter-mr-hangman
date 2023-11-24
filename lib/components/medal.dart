@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Medal extends StatelessWidget {
-  const Medal({required this.position, this.height = 32});
+  const Medal({super.key, required this.position, this.height = 32});
 
   final int position;
   final double? height;
@@ -15,14 +15,14 @@ class Medal extends StatelessWidget {
       case 3:
         return Colors.brown.shade400;
       default:
-        throw new Exception('Unsupported medal position ${position}.');
+        throw Exception('Unsupported medal position $position.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (position > 3) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     return Image.asset(

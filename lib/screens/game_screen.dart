@@ -13,7 +13,7 @@ class GameScreen extends StatefulWidget {
   GameScreen({super.key});
 
   GamePhraseLoader phraseLoader =
-      GameConfig.isDemo ? DemoGamePhraseLoader() : LocalPhraseLoader();
+      GameConfig.isDemo ? const DemoGamePhraseLoader() : LocalPhraseLoader();
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -61,6 +61,7 @@ class _GameScreenState extends State<GameScreen> {
         false;
   }
 
+  @override
   void initState() {
     updateGameState();
   }
@@ -138,10 +139,10 @@ class _GameScreenState extends State<GameScreen> {
                 future: loadNewGame(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   return AnimatedSwitcher(
-                    duration: Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 200),
                     child: _loading &&
                             snapshot.connectionState != ConnectionState.done
-                        ? Center(child: CircularProgressIndicator())
+                        ? const Center(child: CircularProgressIndicator())
                         : Container(
                             margin: const EdgeInsets.symmetric(horizontal: 8),
                             child: Column(

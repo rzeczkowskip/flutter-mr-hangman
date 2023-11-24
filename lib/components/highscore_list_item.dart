@@ -21,13 +21,13 @@ class HighscoreListItem extends StatelessWidget {
 
     return Container(
       height: 42,
-      padding: EdgeInsets.symmetric(horizontal: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Row(
         children: [
-          Text("${formattedDate} ${formattedTime}"),
-          Spacer(flex: 1),
+          Text("$formattedDate $formattedTime"),
+          const Spacer(flex: 1),
           if (position < 4) Medal(position: position),
-          SizedBox(width: 5),
+          const SizedBox(width: 5),
           Text(highscore.score.toString()),
         ],
       ),
