@@ -20,7 +20,7 @@ class LocalPhraseLoader implements GamePhraseLoader {
 
   @override
   Future<String> load() async {
-    if (_words.length == 0) {
+    if (_words.isEmpty) {
       await _initWords();
     }
 
@@ -30,14 +30,14 @@ class LocalPhraseLoader implements GamePhraseLoader {
   }
 
   Future<void> _initWords() async {
-    List<String> _lines = await rootBundle
+    List<String> lines = await rootBundle
         .loadString('resources/phrases_pl.txt')
         .then((value) => LineSplitter.split(value).toList());
 
-    if (_lines.length == 0) {
-      throw new Exception('No phrases found.');
+    if (lines.isEmpty) {
+      throw Exception('No phrases found.');
     }
 
-    _words = _lines;
+    _words = lines;
   }
 }

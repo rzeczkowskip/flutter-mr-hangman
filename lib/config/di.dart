@@ -5,14 +5,14 @@ import '../service/highscores.dart';
 
 GetIt getIt = GetIt.instance;
 
-void registerServices(GetIt _getIt) async {
-  _getIt.registerSingletonAsync<SharedPreferences>(
+void registerServices(GetIt getIt) async {
+  getIt.registerSingletonAsync<SharedPreferences>(
     () => SharedPreferences.getInstance(),
   );
 
-  _getIt.registerSingletonWithDependencies(
+  getIt.registerSingletonWithDependencies(
     () => Highscores(
-      _getIt<SharedPreferences>(),
+      getIt<SharedPreferences>(),
     ),
     dependsOn: [SharedPreferences],
   );

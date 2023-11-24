@@ -8,7 +8,7 @@ import '../model/score.dart';
 import '../service/highscores.dart';
 
 class HighscoresScreen extends StatefulWidget {
-  HighscoresScreen({super.key, required this.highscores});
+  const HighscoresScreen({super.key, required this.highscores});
 
   final Highscores highscores;
 
@@ -79,7 +79,7 @@ class _HighscoresScreenState extends State<HighscoresScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Highscores'),
+        title: const Text('Highscores'),
       ),
       body: CustomScrollView(
         slivers: [

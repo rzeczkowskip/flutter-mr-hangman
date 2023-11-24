@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 enum GameResultDialogState { Won, Over }
 
 class GameResultDialog extends StatelessWidget {
-  GameResultDialog({required this.phrase, required this.result});
+  const GameResultDialog(
+      {super.key, required this.phrase, required this.result});
 
   final String phrase;
   final GameResultDialogState result;
@@ -38,14 +39,14 @@ class _GameResultDialogMessages {
   _GameResultDialogMessages.over(String phrase)
       : title = 'Game over',
         message =
-            'You fought bravely but it\'s time to say goodbye. The phrase was: "${phrase}"',
+            'You fought bravely but it\'s time to say goodbye. The phrase was: "$phrase"',
         buttonIcon = Icons.sentiment_very_dissatisfied,
         buttonLabel = 'OK';
 
   _GameResultDialogMessages.won(String phrase)
       : title = 'It\'s a win!',
         message =
-            'Nice, you were able to guess it! Your phrase was "${phrase}". Let\'s move to the next round...',
+            'Nice, you were able to guess it! Your phrase was "$phrase". Let\'s move to the next round...',
         buttonIcon = Icons.sports_martial_arts,
         buttonLabel = 'OK';
 }
