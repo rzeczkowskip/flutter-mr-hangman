@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 enum GameResultDialogState { Won, Over }
 
 class GameResultDialog extends StatelessWidget {
-  const GameResultDialog({super.key, required this.phrase, required this.result});
+  const GameResultDialog(
+      {super.key, required this.phrase, required this.result});
 
   final String phrase;
   final GameResultDialogState result;

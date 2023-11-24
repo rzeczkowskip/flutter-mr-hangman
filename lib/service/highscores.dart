@@ -47,16 +47,14 @@ class Highscores {
 
     if (page > pagination.totalPages) {
       throw Exception(
-        'Page "$page" is higher than total pages count ${pagination
-            .totalPages}.',
+        'Page "$page" is higher than total pages count ${pagination.totalPages}.',
       );
     }
 
     int startCursor = (page - 1) * itemsPerPage;
     int endCursor = startCursor + itemsPerPage;
 
-    return Future(() =>
-        HighscoresData(
+    return Future(() => HighscoresData(
           pagination,
           _scores.sublist(startCursor, min(endCursor, _scores.length)),
         ));

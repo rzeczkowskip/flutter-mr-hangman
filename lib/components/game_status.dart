@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 typedef KeyboardButtonTapCallback = void Function(String letter);
 
 class GameStatus extends StatelessWidget {
-  const GameStatus({super.key, 
+  const GameStatus({
+    super.key,
     required this.lives,
     required this.usedLives,
   });
