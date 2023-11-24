@@ -8,12 +8,15 @@ import '../components/game_status.dart';
 import '../constants.dart';
 import '../model/game.dart';
 import '../service/game.dart';
+import '../service/highscores.dart';
 
 class GameScreen extends StatefulWidget {
-  GameScreen({super.key});
+  GameScreen({super.key, required this.highscores});
 
   GamePhraseLoader phraseLoader =
       GameConfig.isDemo ? const DemoGamePhraseLoader() : LocalPhraseLoader();
+
+  final Highscores highscores;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
