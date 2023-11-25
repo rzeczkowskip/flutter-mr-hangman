@@ -72,7 +72,7 @@ class GameSession {
     }
 
     if (isWon) {
-      final score = _maskPhrase('').allMatches('_').length;
+      final score = '_'.allMatches(_maskPhrase('')).length;
       onWin?.call(livesLeft, score);
     }
   }
