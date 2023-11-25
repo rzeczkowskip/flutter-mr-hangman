@@ -27,9 +27,12 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(title: AppConfig.name),
-        '/game': (context) => GameScreen(),
-        '/highScores': (context) =>
-            HighscoresScreen(highscores: getIt<Highscores>()),
+        '/game': (context) => GameScreen(
+              highscores: getIt<Highscores>(),
+            ),
+        '/highScores': (context) => HighscoresScreen(
+              highscores: getIt<Highscores>(),
+            ),
       },
       builder: (context, widget) {
         return FutureBuilder(

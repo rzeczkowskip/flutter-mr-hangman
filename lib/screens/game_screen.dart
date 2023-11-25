@@ -8,12 +8,15 @@ import '../components/game_status.dart';
 import '../constants.dart';
 import '../model/game.dart';
 import '../service/game.dart';
+import '../service/highscores.dart';
 
 class GameScreen extends StatefulWidget {
-  GameScreen({super.key});
+  GameScreen({super.key, required this.highscores});
 
   GamePhraseLoader phraseLoader =
       GameConfig.isDemo ? const DemoGamePhraseLoader() : LocalPhraseLoader();
+
+  final Highscores highscores;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -21,6 +24,7 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   bool _loading = true;
+  UniqueKey gameId = UniqueKey();
 
   GameSession _game = GameSession(phrase: '');
 
@@ -86,7 +90,9 @@ class _GameScreenState extends State<GameScreen> {
     String phrase = await widget.phraseLoader.load();
     _game = GameSession(
       phrase: phrase,
-      onWin: (livesLeft) async {
+      onWin: (livesLeft, score) async {
+        widget.highscores.addScore(gameId.toString(), score);
+
         await showDialog(
           context: context,
           builder: (context) => GameResultDialog(

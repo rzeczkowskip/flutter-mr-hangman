@@ -86,10 +86,11 @@ class Highscores {
     });
   }
 
-  Future<void> addScore(int score) {
+  Future<void> addScore(String gameId, int score) {
     _loadDatabaseScores();
 
-    _scores.add(Highscore(DateTime.now(), score));
+    _scores.removeWhere((element) => element.gameId == gameId);
+    _scores.add(Highscore(gameId, DateTime.now(), score));
     _sortScores(_scores);
 
     sharedPreferences.setStringList(
