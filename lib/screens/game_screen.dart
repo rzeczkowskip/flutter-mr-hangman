@@ -89,7 +89,7 @@ class _GameScreenState extends State<GameScreen> {
     String phrase = await widget.phraseLoader.load();
     _game = GameSession(
       phrase: phrase,
-      onWin: (livesLeft) async {
+      onWin: (livesLeft, score) async {
         await showDialog(
           context: context,
           builder: (context) => GameResultDialog(
