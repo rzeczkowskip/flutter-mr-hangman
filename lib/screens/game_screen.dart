@@ -24,6 +24,7 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   bool _loading = true;
+  UniqueKey gameId = UniqueKey();
 
   GameSession _game = GameSession(phrase: '');
 
@@ -90,6 +91,8 @@ class _GameScreenState extends State<GameScreen> {
     _game = GameSession(
       phrase: phrase,
       onWin: (livesLeft, score) async {
+        widget.highscores.addScore(gameId.toString(), score);
+
         await showDialog(
           context: context,
           builder: (context) => GameResultDialog(
