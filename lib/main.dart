@@ -18,8 +18,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final highscores = getIt<Highscores>();
-
     return MaterialApp(
       title: AppConfig.name,
       theme: ThemeData(
@@ -29,8 +27,12 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(title: AppConfig.name),
-        '/game': (context) => GameScreen(highscores: highscores),
-        '/highScores': (context) => HighscoresScreen(highscores: highscores),
+        '/game': (context) => GameScreen(
+              highscores: getIt<Highscores>(),
+            ),
+        '/highScores': (context) => HighscoresScreen(
+              highscores: getIt<Highscores>(),
+            ),
       },
       builder: (context, widget) {
         return FutureBuilder(
