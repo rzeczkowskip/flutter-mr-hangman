@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: AppConfig.name,
       theme: ThemeData(
+        fontFamily: 'Sono',
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
         useMaterial3: true,
       ),
@@ -38,11 +39,17 @@ class MyApp extends StatelessWidget {
         return FutureBuilder(
             future: getIt.allReady(),
             builder: (_, AsyncSnapshot snapshot) {
-              if (snapshot.hasData && widget != null) {
-                return widget;
-              } else {
-                return Container(color: Colors.red);
-              }
+              return Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/environment/bg.png'),
+                  ),
+                ),
+                child: snapshot.hasData && widget != null
+                    ? widget
+                    : Container(color: Colors.red),
+              );
             });
       },
     );
