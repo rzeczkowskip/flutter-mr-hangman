@@ -10,7 +10,7 @@ class MainMenu extends StatelessWidget {
     return Container(
       width: this.maxWidth,
       child: const Column(
-        // runSpacing: 10,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _MenuButton(label: 'New Game', route: '/game'),
           _MenuButton(label: 'High Scores', route: '/highScores'),
@@ -29,11 +29,12 @@ class _MenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: FilledButton(
-          onPressed: () => Navigator.pushNamed(context, route),
-          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
-          child: Text(label),
-        ));
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: FilledButton(
+        onPressed: () => Navigator.pushNamed(context, route),
+        style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
+        child: Text(label),
+      ),
+    );
   }
 }
