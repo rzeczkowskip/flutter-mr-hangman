@@ -18,15 +18,18 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FractionallySizedBox(
-              widthFactor: .8,
-              child: MainMenu(),
-            )
-          ],
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                child: MainMenu(
+                  maxWidth: 320,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

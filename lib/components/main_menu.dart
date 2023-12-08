@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
 class MainMenu extends StatelessWidget {
-  const MainMenu({super.key});
+  const MainMenu({super.key, this.maxWidth});
+
+  final double? maxWidth;
 
   @override
   Widget build(BuildContext context) {
-    return const Wrap(
-      runSpacing: 10,
-      children: [
-        _MenuButton(label: 'New Game', route: '/game'),
-        _MenuButton(label: 'High Scores', route: '/highScores'),
-      ],
+    return Container(
+      width: this.maxWidth,
+      child: const Column(
+        // runSpacing: 10,
+        children: [
+          _MenuButton(label: 'New Game', route: '/game'),
+          _MenuButton(label: 'High Scores', route: '/highScores'),
+        ],
+      ),
     );
   }
 }
@@ -23,9 +28,12 @@ class _MenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton(
-        onPressed: () => Navigator.pushNamed(context, route),
-        style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
-        child: Text(label));
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: FilledButton(
+          onPressed: () => Navigator.pushNamed(context, route),
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
+          child: Text(label),
+        ));
   }
 }
