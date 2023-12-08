@@ -94,6 +94,22 @@ class _GameHangmanDrawingState extends State<GameHangmanDrawing> {
         )
         .toList();
 
-    return Stack(children: images);
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: Colors.yellow.shade300,
+        image: DecorationImage(
+          image: AssetImage('assets/bg2.png'),
+          invertColors: true,
+          fit: BoxFit.none,
+          repeat: ImageRepeat.repeat,
+          alignment: Alignment.center,
+          scale: 3,
+          opacity: .3,
+        ),
+      ),
+      child: Stack(children: images),
+    );
   }
 }
