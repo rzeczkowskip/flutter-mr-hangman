@@ -110,9 +110,11 @@ class _KeyboardButton extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     return Container(
-        height: 42,
-        width: width,
-        padding: const EdgeInsets.all(2),
+      height: 42,
+      width: width,
+      padding: const EdgeInsets.all(2),
+      child: Opacity(
+        opacity: disabled ? .7 : 1,
         child: Material(
           color: disabled ? theme.disabledColor : theme.primaryColor,
           borderRadius: BorderRadius.circular(5),
@@ -128,6 +130,8 @@ class _KeyboardButton extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ))),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
