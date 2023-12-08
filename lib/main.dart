@@ -21,7 +21,19 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: AppConfig.name,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.blue,
+          backgroundColor: Colors.transparent,
+          cardColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
+        textTheme: Typography.whiteMountainView.apply(fontFamily: 'Sono'),
+        // scaffoldBackgroundColor: Colors.transparent,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.white,
+        ),
+        dialogBackgroundColor: Colors.black.withOpacity(.8),
         useMaterial3: true,
       ),
       initialRoute: '/',
@@ -38,11 +50,17 @@ class MyApp extends StatelessWidget {
         return FutureBuilder(
             future: getIt.allReady(),
             builder: (_, AsyncSnapshot snapshot) {
-              if (snapshot.hasData && widget != null) {
-                return widget;
-              } else {
-                return Container(color: Colors.red);
-              }
+              return Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/environment/bg.png'),
+                  ),
+                ),
+                child: snapshot.hasData && widget != null
+                    ? widget
+                    : Container(color: Colors.red),
+              );
             });
       },
     );

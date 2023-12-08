@@ -82,7 +82,6 @@ class _GameHangmanDrawingState extends State<GameHangmanDrawing> {
   @override
   Widget build(BuildContext context) {
     Color primaryColor = Theme.of(context).colorScheme.primary;
-
     List<AnimatedOpacity> images = _assetPaths
         .mapIndexed(
           (index, imagePath) => buildAnimatedImage(
@@ -94,6 +93,71 @@ class _GameHangmanDrawingState extends State<GameHangmanDrawing> {
         )
         .toList();
 
-    return Stack(children: images);
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: Colors.yellow.shade300,
+        image: DecorationImage(
+          image: AssetImage('assets/bg2.png'),
+          invertColors: true,
+          fit: BoxFit.none,
+          repeat: ImageRepeat.repeat,
+          alignment: Alignment.center,
+          scale: 3,
+          opacity: .3,
+        ),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: images,
+      ),
+    );
+  }
+}
+
+class AnimatedHangmanDrawing extends StatefulWidget {
+  const AnimatedHangmanDrawing({
+    super.key,
+    required this.speed,
+  });
+
+  /**
+   * How many steps draw per second
+   */
+  final int speed;
+
+  @override
+  State<AnimatedHangmanDrawing> createState() => _AnimatedHangmanDrawingState();
+}
+
+class _AnimatedHangmanDrawingState extends State<AnimatedHangmanDrawing> {
+  final int _steps = 7;
+  int _step = 0;
+
+  int get _msPerStep => (1000 / widget.speed).toInt();
+
+  @override
+  void initState() {
+    scheduleNextStep();
+  }
+
+  void scheduleNextStep() {
+    Future.delayed(Duration(milliseconds: _msPerStep), () {
+      if (this._step >= _steps) {
+        return;
+      }
+
+      setState(() {
+        _step += 1;
+      });
+
+      scheduleNextStep();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GameHangmanDrawing(lives: this._steps, usedLives: this._step);
   }
 }

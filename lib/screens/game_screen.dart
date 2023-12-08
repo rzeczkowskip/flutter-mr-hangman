@@ -19,10 +19,10 @@ class GameScreen extends StatefulWidget {
   final Highscores highscores;
 
   @override
-  State<GameScreen> createState() => _GameScreenState();
+  State<GameScreen> createState() => _WorldScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _WorldScreenState extends State<GameScreen> {
   bool _loading = true;
   UniqueKey gameId = UniqueKey();
 
@@ -133,120 +133,189 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
+  Widget _buildGameScreenMainFrame(bool isLandscape) {
+    final GameHangmanDrawing gameHangmanDrawing =
+        GameHangmanDrawing(lives: _lives, usedLives: _usedLives);
+
+    final _World world = _World(
+      maskedPhrase: _phrase,
+      hangmanDrawing: isLandscape ? null : gameHangmanDrawing,
+    );
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        children: [
+          Expanded(
+            flex: 0,
+            child: _StatusBar(
+              lives: _lives,
+              usedLives: _usedLives,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Flex(
+              direction: Axis.horizontal,
+              children: [
+                if (isLandscape) gameHangmanDrawing,
+                Expanded(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: world,
+                      ),
+                      Expanded(
+                        flex: 0,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 20),
+                          child: GameKeyboard(
+                            usedLetters: _usedChars,
+                            onTap: (letter) {
+                              _game.guess(letter);
+                            },
+                            disabled: _game.isWon || _game.isOver,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
     return WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
-          body: SafeArea(
-            child: FutureBuilder<void>(
-                future: loadNewGame(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  return AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: _loading &&
-                            snapshot.connectionState != ConnectionState.done
-                        ? const Center(child: CircularProgressIndicator())
-                        : Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  flex: 0,
-                                  child: Container(
-                                    height: 42,
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 5),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 0,
-                                          child: GameStatus(
-                                            lives: _lives,
-                                            usedLives: _usedLives,
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        TextButton.icon(
-                                          style: TextButton.styleFrom(
-                                            backgroundColor: theme
-                                                .colorScheme.primaryContainer,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.maybePop(context);
-                                          },
-                                          icon: Image.asset(
-                                            'assets/exit_icon.png',
-                                            height: 20,
-                                            color: theme.colorScheme.primary,
-                                            colorBlendMode: BlendMode.modulate,
-                                          ),
-                                          label: const Text('End game'),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: OrientationBuilder(
-                                      builder: (context, orientation) {
-                                    Axis direction =
-                                        orientation == Orientation.portrait
-                                            ? Axis.vertical
-                                            : Axis.horizontal;
-
-                                    List<Widget> gameBoxes = [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          margin: const EdgeInsets.all(20),
-                                          child: GameHangmanDrawing(
-                                              lives: _lives,
-                                              usedLives: _usedLives),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 0,
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          margin: const EdgeInsets.symmetric(
-                                            vertical: 30,
-                                            horizontal: 10,
-                                          ),
-                                          child: GamePhrase(phrase: _phrase),
-                                        ),
-                                      ),
-                                    ].toList();
-
-                                    return Flex(
-                                      direction: direction,
-                                      children:
-                                          orientation == Orientation.portrait
-                                              ? gameBoxes
-                                              : (gameBoxes.reversed.toList()),
-                                    );
-                                  }),
-                                ),
-                                Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 20),
-                                  child: GameKeyboard(
-                                    usedLetters: _usedChars,
-                                    onTap: (letter) {
-                                      _game.guess(letter);
-                                    },
-                                    disabled: _game.isWon || _game.isOver,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                  );
-                }),
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: SafeArea(
+          child: FutureBuilder<void>(
+            future: loadNewGame(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: _loading &&
+                        snapshot.connectionState != ConnectionState.done
+                    ? const Center(child: CircularProgressIndicator())
+                    : OrientationBuilder(
+                        builder:
+                            (BuildContext context, Orientation orientation) =>
+                                _buildGameScreenMainFrame(
+                          orientation == Orientation.landscape,
+                        ),
+                      ),
+              );
+            },
           ),
-        ));
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusBar extends StatelessWidget {
+  _StatusBar({required this.lives, required this.usedLives});
+
+  final int lives;
+  final int usedLives;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 42,
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          TextButton.icon(
+            // style: TextButton.styleFrom(
+            //   backgroundColor: theme.colorScheme.primaryContainer,
+            // ),
+            onPressed: () {
+              Navigator.maybePop(context);
+            },
+            icon: Image.asset(
+              'assets/exit_icon.png',
+              height: 20,
+              color: Colors.white,
+              colorBlendMode: BlendMode.modulate,
+            ),
+            label: Text(
+              'End game',
+              style: DefaultTextStyle.of(context).style.apply(heightFactor: .7),
+            ),
+          ),
+          const Spacer(),
+          Expanded(
+            flex: 0,
+            child: GameStatus(
+              lives: lives,
+              usedLives: usedLives,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _World extends StatelessWidget {
+  _World({
+    required this.maskedPhrase,
+    this.hangmanDrawing,
+  });
+
+  final String maskedPhrase;
+  final Widget? hangmanDrawing;
+
+  @override
+  Widget build(BuildContext context) {
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        final isLandscape = orientation == Orientation.landscape;
+        Axis direction = isLandscape ? Axis.horizontal : Axis.vertical;
+
+        final hangmanDrawingContainer = hangmanDrawing == null
+            ? null
+            : Expanded(
+                flex: isLandscape ? 0 : 1,
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.all(20),
+                  child: hangmanDrawing,
+                ),
+              );
+
+        List<Widget> gameBoxes = [
+          if (hangmanDrawingContainer != null) hangmanDrawingContainer,
+          Expanded(
+            flex: isLandscape ? 1 : 0,
+            child: Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.symmetric(
+                vertical: 30,
+                horizontal: 10,
+              ),
+              child: GamePhrase(phrase: maskedPhrase),
+            ),
+          ),
+        ].toList();
+
+        return Flex(
+          direction: direction,
+          children: orientation == Orientation.portrait
+              ? gameBoxes
+              : (gameBoxes.reversed.toList()),
+        );
+      },
+    );
   }
 }
