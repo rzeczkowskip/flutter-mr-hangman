@@ -19,10 +19,10 @@ class GameScreen extends StatefulWidget {
   final Highscores highscores;
 
   @override
-  State<GameScreen> createState() => _GameScreenState();
+  State<GameScreen> createState() => _WorldScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _WorldScreenState extends State<GameScreen> {
   bool _loading = true;
   UniqueKey gameId = UniqueKey();
 
@@ -138,49 +138,54 @@ class _GameScreenState extends State<GameScreen> {
     ThemeData theme = Theme.of(context);
 
     return WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
-          body: SafeArea(
-            child: FutureBuilder<void>(
-                future: loadNewGame(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  return AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: _loading &&
-                            snapshot.connectionState != ConnectionState.done
-                        ? const Center(child: CircularProgressIndicator())
-                        : Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  flex: 0,
-                                  child: _StatusBar(
-                                    lives: _lives,
-                                    usedLives: _usedLives,
-                                  ),
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: SafeArea(
+          child: FutureBuilder<void>(
+              future: loadNewGame(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: _loading &&
+                          snapshot.connectionState != ConnectionState.done
+                      ? const Center(child: CircularProgressIndicator())
+                      : Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                flex: 0,
+                                child: _StatusBar(
+                                  lives: _lives,
+                                  usedLives: _usedLives,
                                 ),
-                                Expanded(
-                                  child: Text('a'),
+                              ),
+                              Expanded(
+                                child: _World(
+                                  lives: _lives,
+                                  usedLives: _usedLives,
+                                  maskedPhrase: _phrase,
                                 ),
-                                Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 20),
-                                  child: GameKeyboard(
-                                    usedLetters: _usedChars,
-                                    onTap: (letter) {
-                                      _game.guess(letter);
-                                    },
-                                    disabled: _game.isWon || _game.isOver,
-                                  ),
-                                )
-                              ],
-                            ),
+                              ),
+                              Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 20),
+                                child: GameKeyboard(
+                                  usedLetters: _usedChars,
+                                  onTap: (letter) {
+                                    _game.guess(letter);
+                                  },
+                                  disabled: _game.isWon || _game.isOver,
+                                ),
+                              ),
+                            ],
                           ),
-                  );
-                }),
-          ),
-        ));
+                        ),
+                );
+              }),
+        ),
+      ),
+    );
   }
 }
 
@@ -226,4 +231,54 @@ class _StatusBar extends StatelessWidget {
   }
 }
 
-class _Game extends StatelessWidget {}
+class _World extends StatelessWidget {
+  _World({
+    required this.lives,
+    required this.usedLives,
+    required this.maskedPhrase,
+  });
+
+  final int lives;
+  final int usedLives;
+  final String maskedPhrase;
+
+  @override
+  Widget build(BuildContext context) {
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        Axis direction = orientation == Orientation.portrait
+            ? Axis.vertical
+            : Axis.horizontal;
+
+        List<Widget> gameBoxes = [
+          Expanded(
+            flex: 1,
+            child: Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.all(20),
+              child: GameHangmanDrawing(lives: lives, usedLives: usedLives),
+            ),
+          ),
+          Expanded(
+            flex: 0,
+            child: Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.symmetric(
+                vertical: 30,
+                horizontal: 10,
+              ),
+              child: GamePhrase(phrase: maskedPhrase),
+            ),
+          ),
+        ].toList();
+
+        return Flex(
+          direction: direction,
+          children: orientation == Orientation.portrait
+              ? gameBoxes
+              : (gameBoxes.reversed.toList()),
+        );
+      },
+    );
+  }
+}
