@@ -133,7 +133,15 @@ class _WorldScreenState extends State<GameScreen> {
     });
   }
 
-  Widget _buildGameScreenMainFrame() {
+  Widget _buildGameScreenMainFrame(bool isLandscape) {
+    final GameHangmanDrawing gameHangmanDrawing =
+        GameHangmanDrawing(lives: _lives, usedLives: _usedLives);
+
+    final _World world = _World(
+      maskedPhrase: _phrase,
+      hangmanDrawing: isLandscape ? null : gameHangmanDrawing,
+    );
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
@@ -146,20 +154,35 @@ class _WorldScreenState extends State<GameScreen> {
             ),
           ),
           Expanded(
-            child: _World(
-              lives: _lives,
-              usedLives: _usedLives,
-              maskedPhrase: _phrase,
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 20),
-            child: GameKeyboard(
-              usedLetters: _usedChars,
-              onTap: (letter) {
-                _game.guess(letter);
-              },
-              disabled: _game.isWon || _game.isOver,
+            flex: 1,
+            child: Flex(
+              direction: Axis.horizontal,
+              children: [
+                if (isLandscape) gameHangmanDrawing,
+                Expanded(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: world,
+                      ),
+                      Expanded(
+                        flex: 0,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 20),
+                          child: GameKeyboard(
+                            usedLetters: _usedChars,
+                            onTap: (letter) {
+                              _game.guess(letter);
+                            },
+                            disabled: _game.isWon || _game.isOver,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -180,10 +203,16 @@ class _WorldScreenState extends State<GameScreen> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               return AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
-                child:
-                    _loading && snapshot.connectionState != ConnectionState.done
-                        ? const Center(child: CircularProgressIndicator())
-                        : _buildGameScreenMainFrame(),
+                child: _loading &&
+                        snapshot.connectionState != ConnectionState.done
+                    ? const Center(child: CircularProgressIndicator())
+                    : OrientationBuilder(
+                        builder:
+                            (BuildContext context, Orientation orientation) =>
+                                _buildGameScreenMainFrame(
+                          orientation == Orientation.landscape,
+                        ),
+                      ),
               );
             },
           ),
@@ -240,34 +269,35 @@ class _StatusBar extends StatelessWidget {
 
 class _World extends StatelessWidget {
   _World({
-    required this.lives,
-    required this.usedLives,
     required this.maskedPhrase,
+    this.hangmanDrawing,
   });
 
-  final int lives;
-  final int usedLives;
   final String maskedPhrase;
+  final Widget? hangmanDrawing;
 
   @override
   Widget build(BuildContext context) {
     return OrientationBuilder(
       builder: (context, orientation) {
-        Axis direction = orientation == Orientation.portrait
-            ? Axis.vertical
-            : Axis.horizontal;
+        final isLandscape = orientation == Orientation.landscape;
+        Axis direction = isLandscape ? Axis.horizontal : Axis.vertical;
+
+        final hangmanDrawingContainer = hangmanDrawing == null
+            ? null
+            : Expanded(
+                flex: isLandscape ? 0 : 1,
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.all(20),
+                  child: hangmanDrawing,
+                ),
+              );
 
         List<Widget> gameBoxes = [
+          if (hangmanDrawingContainer != null) hangmanDrawingContainer,
           Expanded(
-            flex: 1,
-            child: Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.all(20),
-              child: GameHangmanDrawing(lives: lives, usedLives: usedLives),
-            ),
-          ),
-          Expanded(
-            flex: 0,
+            flex: isLandscape ? 1 : 0,
             child: Container(
               alignment: Alignment.center,
               margin: const EdgeInsets.symmetric(
