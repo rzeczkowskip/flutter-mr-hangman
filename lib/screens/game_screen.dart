@@ -133,6 +133,40 @@ class _WorldScreenState extends State<GameScreen> {
     });
   }
 
+  Widget _buildGameScreenMainFrame() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        children: [
+          Expanded(
+            flex: 0,
+            child: _StatusBar(
+              lives: _lives,
+              usedLives: _usedLives,
+            ),
+          ),
+          Expanded(
+            child: _World(
+              lives: _lives,
+              usedLives: _usedLives,
+              maskedPhrase: _phrase,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 20),
+            child: GameKeyboard(
+              usedLetters: _usedChars,
+              onTap: (letter) {
+                _game.guess(letter);
+              },
+              disabled: _game.isWon || _game.isOver,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -142,47 +176,17 @@ class _WorldScreenState extends State<GameScreen> {
       child: Scaffold(
         body: SafeArea(
           child: FutureBuilder<void>(
-              future: loadNewGame(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                return AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 200),
-                  child: _loading &&
-                          snapshot.connectionState != ConnectionState.done
-                      ? const Center(child: CircularProgressIndicator())
-                      : Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                flex: 0,
-                                child: _StatusBar(
-                                  lives: _lives,
-                                  usedLives: _usedLives,
-                                ),
-                              ),
-                              Expanded(
-                                child: _World(
-                                  lives: _lives,
-                                  usedLives: _usedLives,
-                                  maskedPhrase: _phrase,
-                                ),
-                              ),
-                              Container(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 20),
-                                child: GameKeyboard(
-                                  usedLetters: _usedChars,
-                                  onTap: (letter) {
-                                    _game.guess(letter);
-                                  },
-                                  disabled: _game.isWon || _game.isOver,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                );
-              }),
+            future: loadNewGame(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child:
+                    _loading && snapshot.connectionState != ConnectionState.done
+                        ? const Center(child: CircularProgressIndicator())
+                        : _buildGameScreenMainFrame(),
+              );
+            },
+          ),
         ),
       ),
     );
