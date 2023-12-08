@@ -206,14 +206,6 @@ class _StatusBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
-          Expanded(
-            flex: 0,
-            child: GameStatus(
-              lives: lives,
-              usedLives: usedLives,
-            ),
-          ),
-          const Spacer(),
           TextButton.icon(
             // style: TextButton.styleFrom(
             //   backgroundColor: theme.colorScheme.primaryContainer,
@@ -224,10 +216,21 @@ class _StatusBar extends StatelessWidget {
             icon: Image.asset(
               'assets/exit_icon.png',
               height: 20,
-              // color: theme.colorScheme.primary,
+              color: Colors.white,
               colorBlendMode: BlendMode.modulate,
             ),
-            label: const Text('End game'),
+            label: Text(
+              'End game',
+              style: DefaultTextStyle.of(context).style.apply(heightFactor: .7),
+            ),
+          ),
+          const Spacer(),
+          Expanded(
+            flex: 0,
+            child: GameStatus(
+              lives: lives,
+              usedLives: usedLives,
+            ),
           ),
         ],
       ),
